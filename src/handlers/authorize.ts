@@ -1,7 +1,6 @@
-import { Context, t } from 'elysia';
+import { t } from 'elysia';
 import { authorizeApp } from '../functions';
-import { htmlReturn, htmlStyles, prisma } from '../utils';
-import { User } from '@prisma/client';
+import { prisma } from '../utils';
 
 export const AuthorizeQuery = t.Object({
   code: t.String(),

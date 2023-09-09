@@ -1,7 +1,7 @@
 import { Elysia, t } from 'elysia';
 import { AuthorizeQuery, authorize, createChannel, deleteAuthorize } from '../handlers';
 import bearer from '@elysiajs/bearer';
-import { BaseHtml, htmlStyles, Button, prisma } from '../utils';
+import { BaseHtml, htmlStyles, Button, Header, Subheader } from '../utils';
 
 const router = new Elysia({ prefix: 'oauth' }).use(bearer());
 
@@ -18,10 +18,8 @@ router.get(
         title='Authorized'
         children={
           <>
-            <h1 style={htmlStyles.header}>You're being authorized</h1>
-            <p style={htmlStyles.subheader}>
-              Now you have to create a channel, hit the button below
-            </p>
+            <Header text="You're being authorized" />
+            <Subheader text='Now you have to create a channel, hit the button below' />
             <Button link='/api/oauth/create-channel' text='Create channel' />
           </>
         }
