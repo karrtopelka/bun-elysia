@@ -1,8 +1,3 @@
-export type HtmlReturnProps = {
-  title?: string;
-  data: JSX.Element;
-};
-
 export const htmlStyles = {
   body: 'font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; display: grid; place-items: center; height: 100vh; margin: 0;',
   button:
@@ -13,7 +8,20 @@ export const htmlStyles = {
     'display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100vw; background-color: #f4f4f4; gap: 1rem;',
 };
 
-export const htmlReturn = ({ title = 'AlphaMail', data }: HtmlReturnProps) => {
+export const Button = ({ text, link }: { text: string; link: string }) => {
+  return (
+    <a href={link} style={htmlStyles.button}>
+      {text}
+    </a>
+  );
+};
+
+export type BaseHtmlProps = {
+  title?: string;
+  children: JSX.Element;
+};
+
+export const BaseHtml = ({ title = 'AlphaMail', children }: BaseHtmlProps) => {
   return (
     <html lang='en'>
       <head>
@@ -22,7 +30,7 @@ export const htmlReturn = ({ title = 'AlphaMail', data }: HtmlReturnProps) => {
         <title>{title}</title>
       </head>
       <body style={htmlStyles.body}>
-        <div style={htmlStyles.container}>{data}</div>
+        <div style={htmlStyles.container}>{children}</div>
       </body>
     </html>
   );

@@ -1,8 +1,7 @@
 import { Elysia, t } from 'elysia';
 import { AuthorizeQuery, authorize, createChannel, deleteAuthorize } from '../handlers';
 import bearer from '@elysiajs/bearer';
-import { htmlReturn, htmlStyles } from '../utils';
-import { AxiosError } from 'axios';
+import { BaseHtml, htmlStyles, Button, prisma } from '../utils';
 
 const router = new Elysia({ prefix: 'oauth' }).use(bearer());
 
@@ -13,18 +12,21 @@ router.get(
 
     set.headers['Authorization'] = `Bearer ${data.access_token}`;
     set.status = 200;
-    return htmlReturn({
-      title: 'Authorized',
-      data: (
-        <>
-          <h1 style={htmlStyles.header}>You're being authorized</h1>
-          <p style={htmlStyles.subheader}>Now you have to create a channel, hit the button below</p>
-          <a href='/api/oauth/create-channel'>
-            <button style={htmlStyles.button}>Create Channel</button>
-          </a>
-        </>
-      ),
-    });
+
+    return (
+      <BaseHtml
+        title='Authorized'
+        children={
+          <>
+            <h1 style={htmlStyles.header}>You're being authorized</h1>
+            <p style={htmlStyles.subheader}>
+              Now you have to create a channel, hit the button below
+            </p>
+            <Button link='/api/oauth/create-channel' text='Create channel' />
+          </>
+        }
+      />
+    );
   },
   {
     query: AuthorizeQuery,
@@ -45,15 +47,17 @@ router.get(
 
     // const data = createChannel(bearer);
 
-    return htmlReturn({
-      title: 'Channel created',
-      data: (
-        <>
-          <h1 style={htmlStyles.header}>Channel created</h1>
-          <p style={htmlStyles.subheader}>You can now use the app</p>
-        </>
-      ),
-    });
+    return (
+      <BaseHtml
+        title='Channel created'
+        children={
+          <>
+            <h1 style={htmlStyles.header}>Channel created</h1>
+            <p style={htmlStyles.subheader}>You can now use the app</p>
+          </>
+        }
+      />
+    );
   },
   {
     beforeHandle({ bearer, set }) {
