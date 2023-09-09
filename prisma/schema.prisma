@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  access_token  String
+  token_type    String
+  expires_in    Int
+  refresh_token String
+  scope         String
+  api_domain    String
+  created_at    DateTime @default(now())
+}
+
+model Channel {
+  id                    String   @id @default(auto()) @map("_id") @db.ObjectId
+  channel_id            String
+  name                  String
+  avatar_url            String?
+  provider_channel_id   String
+  marketplace_client_id String
+  pd_company_id         String
+  pd_user_id            String
+  created_at            DateTime @default(now())
+  provider_type         String
+  template_support      Boolean  @default(false)
+}
+
+model Conversation {
+  id                   String        @id @default(auto()) @map("_id") @db.ObjectId
+  conversation_id      String
+  link                 String
+  status               String
+  seen                 Boolean
+  next_messages_cursor String
+  messages             Message[]
+  participants         Participant[]
+}
+
+model Message {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  message_id      String
+  created_at      DateTime     @default(now())
+  message         String
+  sender_id       String
+  status          String
+  reply_by        DateTime?
+  attachments     Attachment[]
+  conversation    Conversation @relation(fields: [conversation_id], references: [id])
+  conversation_id String       @db.ObjectId
+}
+
+model Participant {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  participant_id  String
+  name            String
+  role            String
+  avatar_url      String?
+  fetch_avatar    Boolean      @default(false)
+  avatar_expires  Boolean      @default(false)
+  conversation    Conversation @relation(fields: [conversation_id], references: [id])
+  conversation_id String       @db.ObjectId
+}
+
+type Attachment {
+  id          String
+  type        String
+  name        String
+  size        Int
+  url         String
+  link_expres Boolean @default(false)
+  preview_url String
+}

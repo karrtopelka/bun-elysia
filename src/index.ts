@@ -1,7 +1,12 @@
-import { Elysia } from "elysia";
+import app from './app';
+import { checkEnv } from './utils';
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+app.listen(3000);
 
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+const startup = () => {
+  checkEnv();
+
+  console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
+};
+
+startup();

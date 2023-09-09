@@ -6,7 +6,13 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "@elysiajs/bearer": "^0.6.0",
+    "@elysiajs/html": "^0.6.4",
+    "@elysiajs/swagger": "^0.6.1",
+    "@prisma/client": "5.2.0",
+    "axios": "^1.5.0",
+    "elysia": "latest",
+    "prisma": "^5.2.0"
   },
   "devDependencies": {
     "bun-types": "latest"
