@@ -16,6 +16,10 @@ export const getAllConversations = async () => {
       },
     },
   });
+  console.log(
+    '🚀 ~ file: getAllConversations.ts:19 ~ getAllConversations ~ conversations:',
+    conversations,
+  );
 
   const response_data = {
     success: true,

@@ -7,10 +7,6 @@ export const checkEnv = (): void => {
     throw new Error('CLIENT_SECRET is not defined');
   }
 
-  if (!Bun.env.API_URL) {
-    throw new Error('API_URL is not defined');
-  }
-
   if (!Bun.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is not defined');
   }

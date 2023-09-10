@@ -1,24 +1,21 @@
-import { t } from 'elysia';
 import { authorizeApp } from '../functions';
 import { prisma } from '../utils';
-
-export const AuthorizeQuery = t.Object({
-  code: t.String(),
-});
 
 export const authorize = async (code: string) => {
   try {
     const response = await authorizeApp({ code });
+    console.log('🚀 ~ file: authorize.ts:7 ~ authorize ~ response:', response.data);
 
     if (response.status !== 200) {
       throw new Error('Error ocured during authorization');
     }
 
-    const user = await prisma.user.create(response.data);
+    const user = await prisma.user.create({ data: response.data });
+    console.log('🚀 ~ file: authorize.ts:14 ~ authorize ~ user:', user);
 
     return user;
   } catch (error) {
-    throw new Error('Error ocured during authorization');
+    console.log(error);
   }
 };
 

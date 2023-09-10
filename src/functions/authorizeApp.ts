@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { generateCredentials } from '../utils';
+import { generateCredentials, getDomain } from '../utils';
 
 export type AuthorizeAppProps = {
   code: string;
@@ -8,10 +8,12 @@ export type AuthorizeAppProps = {
 export const authorizeApp = async ({ code }: AuthorizeAppProps) => {
   const credentials = generateCredentials();
 
+  const redirectUri = `${getDomain()}/api/oauth/authorize`;
+
   const body = {
     grant_type: 'authorization_code',
     code,
-    redirect_uri: `${Bun.env.API_URL}/oauth/authorize`,
+    redirect_uri: redirectUri,
   };
 
   const headers = {

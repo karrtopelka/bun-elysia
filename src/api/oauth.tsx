@@ -1,35 +1,55 @@
 import { Elysia, t } from 'elysia';
-import { AuthorizeQuery, authorize, createChannel, deleteAuthorize } from '../handlers';
-import bearer from '@elysiajs/bearer';
+import { authorize, createChannel, deleteAuthorize } from '../handlers';
 import { BaseHtml, htmlStyles, Button, Header, Subheader } from '../utils';
+import cookie from '@elysiajs/cookie';
 
-const router = new Elysia({ prefix: 'oauth' }).use(bearer());
+const router = new Elysia({ prefix: 'oauth' }).use(cookie());
 
-router.get(
-  '/authorize',
-  async ({ query: { code }, set }) => {
-    const data = await authorize(code);
+router
+  .model({
+    'authorize.code': t.Object({ code: t.String() }),
+  })
+  .get(
+    '/authorize',
+    async ({ query: { code }, setCookie, set }) => {
+      const data = await authorize(code);
 
-    set.headers['Authorization'] = `Bearer ${data.access_token}`;
-    set.status = 200;
+      if (!data) {
+        set.status = 400;
+        return (
+          <BaseHtml
+            title='Error'
+            children={
+              <>
+                <Header text='Error' />
+                <Subheader text='An error occurred while authorizing' />
+              </>
+            }
+          />
+        );
+      }
 
-    return (
-      <BaseHtml
-        title='Authorized'
-        children={
-          <>
-            <Header text="You're being authorized" />
-            <Subheader text='Now you have to create a channel, hit the button below' />
-            <Button link='/api/oauth/create-channel' text='Create channel' />
-          </>
-        }
-      />
-    );
-  },
-  {
-    query: AuthorizeQuery,
-  },
-);
+      setCookie('bearer', data.access_token, {
+        maxAge: data.expires_in,
+      });
+
+      return (
+        <BaseHtml
+          title='Authorized'
+          children={
+            <>
+              <Header text="You're being authorized" />
+              <Subheader text='Now you have to create a channel, hit the button below' />
+              <Button link='/api/oauth/create-channel' text='Create channel' />
+            </>
+          }
+        />
+      );
+    },
+    {
+      query: 'authorize.code',
+    },
+  );
 
 router.delete('/authorize', async ({ set }) => {
   await deleteAuthorize();
@@ -40,10 +60,8 @@ router.delete('/authorize', async ({ set }) => {
 
 router.get(
   '/create-channel',
-  async ({ bearer }) => {
-    console.log('🚀 ~ file: oauth.tsx:53 ~ router.get ~ bearer:', bearer);
-
-    // const data = createChannel(bearer);
+  async ({ cookie }) => {
+    await createChannel(cookie.bearer);
 
     return (
       <BaseHtml
@@ -58,8 +76,8 @@ router.get(
     );
   },
   {
-    beforeHandle({ bearer, set }) {
-      if (!bearer) {
+    beforeHandle({ cookie, set }) {
+      if (!cookie) {
         set.status = 400;
         set.headers['WWW-Authenticate'] = `Bearer realm='sign', error="invalid_request"`;
 
